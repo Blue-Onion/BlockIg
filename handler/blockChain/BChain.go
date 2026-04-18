@@ -14,6 +14,10 @@ type Block struct {
 	Hash      []byte
 }
 
+type BlockChain struct {
+	Blocks []*Block
+}
+
 func (b *Block) SetHash() {
 	timestamp := []byte(strconv.FormatInt(b.Timestamp, 10))
 	headers := bytes.Join([][]byte{b.PrevHash, b.Data, timestamp}, []byte{})
@@ -22,6 +26,11 @@ func (b *Block) SetHash() {
 
 }
 
+func (bc *BlockChain) AddBlock(data string) {
+	prevBlock := bc.Blocks[len(bc.Blocks)-1]
+	newBlocks := NewBlock(data, prevBlock.Hash)
+	bc.Blocks = append(bc.Blocks, newBlocks)
+}
 func NewBlock(data string, prevBlock []byte) *Block {
 	block := &Block{
 		Timestamp: time.Now().Unix(),
@@ -31,4 +40,13 @@ func NewBlock(data string, prevBlock []byte) *Block {
 
 	block.SetHash()
 	return block
+}
+
+func NewGennissBlock() *Block {
+	return NewBlock("Gennies Block", []byte{})
+
+}
+
+func NewBlockChain() *BlockChain {
+	return &BlockChain{[]*Block{NewGennissBlock()}}
 }
